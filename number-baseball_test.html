@@ -1,0 +1,84 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>숫자야구</title>
+</head>
+<body>
+<form id="form">
+  <input type="text" id="input">
+  <button>확인</button>
+</form>
+<div id="logs"></div>
+<script>
+  const $input = document.querySelector('#input');
+  const $form = document.querySelector('#form');
+  const $logs = document.querySelector('#logs');
+
+  const number = Array(9).fill().map((el,idx)=>{
+    return idx + 1 ;
+  });
+
+  const answer = [];
+  for (i = 0; i<4; i++){
+    let numberIndex = Math.floor(Math.random() * number.length);
+    answer.push(number[numberIndex]);
+    number.splice(numberIndex,1)
+  }
+  console.log(answer)
+
+  const tries = [];
+  function checkInput(value) {
+    if (value.length !== 4){
+      return alert('4자리 숫자가 아님');
+    }
+    if (new Set(value).size !== 4){
+      return alert('중복있음');
+    }
+    if (tries.includes(value)){
+      return alert('시도됨');
+    }
+    return true;
+  }
+
+  $form.addEventListener('submit', (event)=>{
+    event.preventDefault(); //기본동작 막기
+    const value = $input.value;
+    $input.value = '';
+    if(!checkInput(value)){
+      return;
+    }
+    if(answer.join('') === value) {
+			//$logs.textContent = '홈런';
+      $logs.append('홈런');
+      return;
+    }
+    if (tries.length >= 9){
+      const message = document.createTextNode(`패배 정답은 ${answer.join('')}`);
+      $logs.appendChild(message);
+      return;
+    }
+
+    let strike = 0;
+    let ball = 0;
+    for (let i = 0; i < answer.length; i++){
+      const index = value.indexOf(answer[i]);
+      if (index > 0){
+        if (index === i){
+          strike += 1;
+        }
+        else{
+          ball += 1;
+        }
+      }
+    }
+    $logs.append(`${value}: ${strike} 스트라이크 ${ball} 볼`, document.createElement('br'));
+
+
+    tries.push(value);
+  });
+
+
+
+</script>
+</body>
+</html>
